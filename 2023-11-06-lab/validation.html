@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validation Form</title>
+<script>
+  function validateForm() {
+    var url = document.forms["validationForm"]["url"].value;
+    var phone = document.forms["validationForm"]["phone"].value;
+    var email = document.forms["validationForm"]["email"].value;
+    
+    var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    var phoneRegex = /^\(\d{3}\)\s\d{3}-\d{4}$|^\d{3}-\d{3}-\d{4}$|^\d{3} \d{3} \d{4}$|^\+\d{1,3} \d{3}-\d{3}-\d{4}$/;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    var valid = true;
+    var errorMessage = "";
+
+    if (!urlRegex.test(url)) {
+      errorMessage += "URL is invalid. Correct format: http://www.example.com\n";
+      valid = false;
+    }
+    if (!phoneRegex.test(phone)) {
+      errorMessage += "Phone number is invalid. Correct formats: (123) 456-7890, 123-456-7890, +1 123-456-7890\n";
+      valid = false;
+    }
+    if (!emailRegex.test(email)) {
+      errorMessage += "Email address is invalid. Correct format: user@example.com\n";
+      valid = false;
+    }
+
+    var messageElement = document.getElementById("validationMessage");
+    if (!valid) {
+      messageElement.innerText = errorMessage;
+      messageElement.style.color = 'red';
+      return false;
+    } else {
+      // If everything is valid, display a success message
+      messageElement.innerText = "All details are valid!";
+      messageElement.style.color = 'green';
+      return false; // Prevent actual form submission for this example
+    }
+  }
+</script>
+</head>
+<body><center>
+<h1> Validation Form</h1>
+<form name="validationForm" onsubmit="return validateForm()">
+  <label for="url">URL:</label><br>
+  <input type="text" id="url" name="url" required><br>
+  
+  <label for="phone">Phone Number:</label><br>
+  <input type="text" id="phone" name="phone" required><br>
+  
+  <label for="email">Email ID:</label><br>
+  <input type="text" id="email" name="email" required><br>
+  <br>
+  <input type="submit" value="Submit">
+  <input type="reset" value="Reset">
+</form>
+
+<div id="validationMessage"></div> <!-- This is where the validation message will appear -->
+</center>
+</body>
+</html>
