@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#0044CC">
+	<link rel="manifest" href="manifest.json">
+    <title>Sign In Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+        }
+        h2 {
+            color: #ff0000;
+        }
+        form {
+            max-width: 300px;
+            margin: auto;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+            color: #333;
+        }
+        input[type=email], input[type=password] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px; /* Adjusted margin for spacing */
+            display: block; /* Make inputs block level */
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type=submit], input[type=reset] {
+            background-color: #ff0000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 100%; /* Full width */
+        }
+        input[type=submit]:hover, input[type=reset]:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Sign In</h2>
+    <form id="login-form" onsubmit="event.preventDefault(); submitLoginForm();">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">
+    </form>
+
+    <script>
+        function submitLoginForm() {
+		    if (!navigator.onLine) {
+        alert("You are currently offline. Please check your internet connection.");
+        return;
+    }
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            // Send a POST request to the signin.php script
+			
+            fetch('signin.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password)
+            })
+            .then(response => response.text())
+            .then(text => {
+                if (text === "Verified") {
+                    // If the server verifies the user, start the simulated 2FA process
+                    simulate2FA();
+                } else {
+                    alert(text); // Will alert "Invalid password." or "User not found."
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function simulate2FA() {
+            // Simulate asking for a phone number
+            var phoneNumber = prompt('Enter your phone number for 2FA:');
+            if (phoneNumber) {
+                // Generate a random 6-digit 2FA code
+                var code = generateVerificationCode();
+                // Show the code in a dialog box (simulated text message received)
+                alert('Simulated SMS with 2FA code: ' + code);
+                // Ask the user to enter the code
+                var userCode = prompt('Enter the 6-digit code:');
+                if (userCode === code) {
+                    // If the code matches, proceed to the secured area
+                    window.location.href = 'details.html';
+                } else {
+                    alert('Incorrect code. Access denied.');
+                }
+            }
+        }
+
+        function generateVerificationCode() {
+            return ('000000' + Math.floor(Math.random() * 999999)).slice(-6);
+        }
+    </script>
+	<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+}
+</script>
+
+</body>
+</html>
